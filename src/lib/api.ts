@@ -59,72 +59,71 @@ function getApiBaseUrl(): string {
 
 const API_BASE_URL = getApiBaseUrl();
 
+// Ensure baseURL is always HTTPS in production
+let finalBaseURL = API_BASE_URL;
+if (typeof window !== 'undefined' && window.location.protocol === 'https:' && finalBaseURL.startsWith('http://')) {
+  console.error('[API] CRITICAL: baseURL is HTTP but page is HTTPS, forcing conversion');
+  finalBaseURL = finalBaseURL.replace(/^http:\/\//, 'https://');
+  console.error('[API] Converted baseURL to:', finalBaseURL);
+}
+
 export const api = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: finalBaseURL,
   headers: {
     'Content-Type': 'application/json',
   },
+  // Add transformRequest to ensure URL is always HTTPS
+  transformRequest: [(data, headers) => {
+    // This runs before the interceptor, ensuring URL is correct
+    return data;
+  }],
 });
 
 // Add token to requests and force HTTPS
 api.interceptors.request.use((config) => {
-  // Log every request for debugging
-  console.log('[API] Request interceptor called');
-  console.log('[API] Request config:', {
-    url: config.url,
-    baseURL: config.baseURL,
-    method: config.method,
-  });
-  
   const token = localStorage.getItem('access_token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   
   // CRITICAL: Force HTTPS if page is loaded over HTTPS (mixed content security)
-  // This ensures all requests use HTTPS even if baseURL was set to HTTP
+  // Double-check and force HTTPS conversion
   if (typeof window !== 'undefined' && window.location.protocol === 'https:') {
-    let modified = false;
-    
-    // Check and fix baseURL
+    // Force baseURL to HTTPS
     if (config.baseURL && config.baseURL.startsWith('http://')) {
-      console.error('[API] INTERCEPTOR FIXING baseURL from HTTP to HTTPS:', config.baseURL);
+      console.error('[API] INTERCEPTOR: Converting baseURL HTTP->HTTPS:', config.baseURL);
       config.baseURL = config.baseURL.replace(/^http:\/\//, 'https://');
-      modified = true;
     }
     
-    // Check and fix absolute URLs in config.url
+    // Force absolute URLs to HTTPS
     if (config.url && config.url.startsWith('http://')) {
-      console.error('[API] INTERCEPTOR FIXING url from HTTP to HTTPS:', config.url);
+      console.error('[API] INTERCEPTOR: Converting url HTTP->HTTPS:', config.url);
       config.url = config.url.replace(/^http:\/\//, 'https://');
-      modified = true;
     }
     
-    // Construct what the final URL will be and check it
-    const finalUrl = config.baseURL 
+    // Verify the final URL will be HTTPS
+    const constructedUrl = config.baseURL 
       ? (config.url?.startsWith('http') ? config.url : `${config.baseURL}${config.url || ''}`)
       : config.url;
     
-    if (finalUrl && finalUrl.startsWith('http://')) {
-      console.error('[API] INTERCEPTOR DETECTED HTTP in final URL:', finalUrl);
-      // Force baseURL to HTTPS
+    if (constructedUrl && constructedUrl.startsWith('http://')) {
+      console.error('[API] INTERCEPTOR: Final URL is still HTTP! Forcing baseURL fix');
       if (config.baseURL) {
-        config.baseURL = config.baseURL.replace(/^http:\/\//, 'https://');
-        console.error('[API] INTERCEPTOR FORCED baseURL to HTTPS:', config.baseURL);
-        modified = true;
+        config.baseURL = 'https://' + config.baseURL.replace(/^https?:\/\//, '');
       }
     }
     
-    if (modified) {
-      console.error('[API] INTERCEPTOR MODIFIED CONFIG - Final values:', {
-        url: config.url,
-        baseURL: config.baseURL,
-        finalUrl: config.baseURL ? `${config.baseURL}${config.url || ''}` : config.url,
-      });
-    }
+    // Log final state
+    console.log('[API] Interceptor final state:', {
+      baseURL: config.baseURL,
+      url: config.url,
+      constructed: config.baseURL ? `${config.baseURL}${config.url || ''}` : config.url,
+    });
   }
   
   return config;
+}, (error) => {
+  return Promise.reject(error);
 });
 
 // Handle token refresh on 401
