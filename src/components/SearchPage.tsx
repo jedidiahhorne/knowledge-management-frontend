@@ -61,7 +61,17 @@ export default function SearchPage() {
   const totalPages = searchResults ? Math.ceil(searchResults.total / limit) : 0;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <DashboardLayout
+      selectedTagIds={selectedTagIds}
+      onTagSelect={(tagIds) => {
+        setSelectedTagIds(tagIds);
+        // Update tag names based on selected IDs
+        const selectedTags = tagsData?.tags?.filter((tag) => tagIds.includes(tag.id)) || [];
+        setSelectedTagNames(selectedTags.map((tag) => tag.name));
+        setPage(0);
+      }}
+    >
+      <div className="max-w-7xl mx-auto">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Search Notes</h1>
           <p className="text-gray-600">Full-text search across your notes and tags</p>
