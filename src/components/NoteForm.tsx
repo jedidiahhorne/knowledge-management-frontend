@@ -5,6 +5,8 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { notesApi, tagsApi, type Tag } from '../lib/api';
 import DashboardLayout from './DashboardLayout';
+import FileUpload from './FileUpload';
+import AttachmentList from './AttachmentList';
 import type { AxiosError } from 'axios';
 
 type ViewMode = 'edit' | 'preview' | 'split';
@@ -297,6 +299,21 @@ export default function NoteForm() {
                 ))}
               </div>
             </div>
+
+            {/* File Upload (only when editing) */}
+            {isEditing && id && (
+              <div className="mb-6">
+                <h3 className="text-sm font-medium text-gray-700 mb-2">Upload Files</h3>
+                <FileUpload noteId={Number(id)} />
+              </div>
+            )}
+
+            {/* Attachments List (only when editing) */}
+            {isEditing && id && (
+              <div className="mb-6">
+                <AttachmentList noteId={Number(id)} />
+              </div>
+            )}
 
             {/* Options */}
             <div className="mb-6 space-y-3">

@@ -7,6 +7,9 @@ import { notesApi } from '../lib/api';
 import { format } from 'date-fns';
 import DashboardLayout from './DashboardLayout';
 import NoteTagEditor from './NoteTagEditor';
+import FileUpload from './FileUpload';
+import AttachmentList from './AttachmentList';
+import AttachmentList from './AttachmentList';
 
 export default function NoteDetail() {
   const { id } = useParams<{ id: string }>();
@@ -129,16 +132,22 @@ export default function NoteDetail() {
               <div>
                 Updated: {format(new Date(note.updated_at), 'MMM d, yyyy HH:mm')}
               </div>
-              {note.attachments && note.attachments.length > 0 && (
-                <div>
-                  {note.attachments.length} attachment{note.attachments.length !== 1 ? 's' : ''}
-                </div>
-              )}
             </div>
           </div>
 
+          {/* File Upload */}
+          <div className="mb-6">
+            <h3 className="text-sm font-medium text-gray-700 mb-2">Upload Files</h3>
+            <FileUpload noteId={note.id} />
+          </div>
+
+          {/* Attachments List */}
+          <div className="mb-6">
+            <AttachmentList noteId={note.id} />
+          </div>
+
           {/* Content */}
-          <div className="prose prose-sm max-w-none">
+          <div className="prose prose-sm max-w-none mb-8">
             {note.content ? (
               <ReactMarkdown remarkPlugins={[remarkGfm]}>
                 {note.content}
@@ -146,6 +155,11 @@ export default function NoteDetail() {
             ) : (
               <p className="text-gray-500 italic">No content</p>
             )}
+          </div>
+
+          {/* Attachments */}
+          <div className="border-t border-gray-200 pt-6">
+            <AttachmentList noteId={note.id} showUpload={true} />
           </div>
         </div>
       </div>
