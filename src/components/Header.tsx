@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import HeaderSearchBar from './HeaderSearchBar';
 
 interface HeaderProps {
   onMenuClick: () => void;
@@ -46,7 +47,7 @@ export default function Header({ onMenuClick }: HeaderProps) {
 
   return (
     <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-10">
-      <div className="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
+      <div className="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8 gap-4">
         {/* Left side - Menu button and title */}
         <div className="flex items-center gap-4">
           <button
@@ -107,28 +108,13 @@ export default function Header({ onMenuClick }: HeaderProps) {
           </nav>
         </div>
 
+        {/* Center - Search Bar */}
+        <div className="hidden lg:block flex-1 max-w-2xl mx-4">
+          <HeaderSearchBar />
+        </div>
+
         {/* Right side - User menu */}
         <div className="flex items-center gap-4">
-          {/* Search button (optional) */}
-          <button
-            className="p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 hidden sm:block"
-            aria-label="Search"
-          >
-            <svg
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-          </button>
-
           {/* User menu */}
           {user && (
             <div className="relative" ref={menuRef}>
