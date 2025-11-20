@@ -17,6 +17,12 @@ https://frontend.up.railway.app/backend.up.railway.app/api/v1/auth/login/json
 
 This happens when `VITE_API_BASE_URL` is missing the `https://` protocol.
 
+## Problem 4: Mixed Content Error
+
+Browser error: "Mixed Content: The page was loaded over HTTPS, but requested an insecure XMLHttpRequest endpoint 'http://...'"
+
+This happens when `VITE_API_BASE_URL` uses `http://` instead of `https://` in production.
+
 ## Root Causes
 
 1. **Vite embeds environment variables at build time**, not runtime. If `VITE_API_BASE_URL` isn't set during the Docker build, it defaults to `localhost:8000`.
@@ -24,6 +30,8 @@ This happens when `VITE_API_BASE_URL` is missing the `https://` protocol.
 2. **Railway provides internal URLs** (`railway.internal`) which are only accessible within Railway's network, not from browsers. You must use the **public URL**.
 
 3. **Missing protocol** - If `VITE_API_BASE_URL` doesn't start with `https://`, axios treats it as a relative URL and prepends the frontend's origin.
+
+4. **HTTP in production** - If `VITE_API_BASE_URL` uses `http://` but the frontend is served over HTTPS, browsers block the request due to mixed content security policy.
 
 ## Solution
 
@@ -97,6 +105,12 @@ VITE_API_BASE_URL=https://knowledge-management-backend.railway.internal/api/v1
 VITE_API_BASE_URL=http://localhost:8000/api/v1
 ```
 **Result:** `ERR_CONNECTION_REFUSED` - localhost doesn't exist in production
+
+### ❌ Wrong: HTTP in Production
+```
+VITE_API_BASE_URL=http://knowledge-management-backend.up.railway.app/api/v1
+```
+**Result:** Mixed Content Error - browsers block HTTP requests from HTTPS pages
 
 ### ✅ Correct: Public URL with Protocol
 ```
