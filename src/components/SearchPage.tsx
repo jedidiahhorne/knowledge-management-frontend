@@ -105,11 +105,11 @@ export default function SearchPage() {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
                 size={5}
               >
-                {tagsData?.tags.map((tag: { id: number; name: string }) => (
+                {tagsData?.tags?.map((tag: { id: number; name: string }) => (
                   <option key={tag.id} value={tag.id}>
                     {tag.name}
                   </option>
-                ))}
+                )) || []}
               </select>
             </div>
 
@@ -204,7 +204,7 @@ export default function SearchPage() {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {searchResults.notes.map((note) => (
+                  {(searchResults.notes || []).map((note) => (
                     <NoteCard key={note.id} note={note} />
                   ))}
                 </div>
