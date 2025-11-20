@@ -8,11 +8,22 @@ The frontend is trying to connect to `localhost:8000` instead of your Railway ba
 
 The frontend is trying to use Railway's internal URL (`railway.internal`) which is not accessible from browsers.
 
+## Problem 3: URL Duplication
+
+The API URL is being duplicated, like:
+```
+https://frontend.up.railway.app/backend.up.railway.app/api/v1/auth/login/json
+```
+
+This happens when `VITE_API_BASE_URL` is missing the `https://` protocol.
+
 ## Root Causes
 
 1. **Vite embeds environment variables at build time**, not runtime. If `VITE_API_BASE_URL` isn't set during the Docker build, it defaults to `localhost:8000`.
 
 2. **Railway provides internal URLs** (`railway.internal`) which are only accessible within Railway's network, not from browsers. You must use the **public URL**.
+
+3. **Missing protocol** - If `VITE_API_BASE_URL` doesn't start with `https://`, axios treats it as a relative URL and prepends the frontend's origin.
 
 ## Solution
 
@@ -29,10 +40,12 @@ You need to set `VITE_API_BASE_URL` as a **build argument** in Railway.
 | `VITE_API_BASE_URL` | `https://your-backend-service.up.railway.app/api/v1` |
 
 **CRITICAL:** 
+- **MUST start with `https://`** (or `http://` for local dev)
 - Use the **PUBLIC URL** from Railway's Networking tab
 - URL format: `https://service-name.up.railway.app/api/v1`
 - **DO NOT** use `railway.internal` URLs - these don't work from browsers
 - **DO NOT** use `localhost` - this won't work in production
+- **DO NOT** omit the protocol - this causes URL duplication
 
 ### Step 2: Trigger a Rebuild
 
@@ -45,17 +58,9 @@ After setting the variable:
 ### Step 3: Verify
 
 After redeployment:
-1. Check the build logs - you should see the build process
-2. Open your frontend URL
-3. Try to login - it should now connect to your backend
-
-## Alternative: Using Railway's Build Arguments
-
-If the above doesn't work, Railway might need the variable set differently. Check:
-
-1. **Service Settings** → **Build** section
-2. Look for "Build Arguments" or "Build Environment Variables"
-3. Ensure `VITE_API_BASE_URL` is available during build
+1. Open browser console (F12)
+2. Look for: `API Base URL: https://your-backend.up.railway.app/api/v1`
+3. Try to login - it should now connect correctly
 
 ## Finding Your Backend URL
 
@@ -71,6 +76,33 @@ If the above doesn't work, Railway might need the variable set differently. Chec
 - Use the URL that ends with `.up.railway.app`
 - **NOT** the one with `.railway.internal`
 - The public URL is what browsers can access
+- **MUST include `https://` at the beginning**
+
+## Common Mistakes
+
+### ❌ Wrong: Missing Protocol
+```
+VITE_API_BASE_URL=knowledge-management-backend.up.railway.app/api/v1
+```
+**Result:** URL duplication - `https://frontend.up.railway.app/knowledge-management-backend.up.railway.app/api/v1`
+
+### ❌ Wrong: Internal URL
+```
+VITE_API_BASE_URL=https://knowledge-management-backend.railway.internal/api/v1
+```
+**Result:** `ERR_NAME_NOT_RESOLVED` - internal URLs don't work from browsers
+
+### ❌ Wrong: Localhost
+```
+VITE_API_BASE_URL=http://localhost:8000/api/v1
+```
+**Result:** `ERR_CONNECTION_REFUSED` - localhost doesn't exist in production
+
+### ✅ Correct: Public URL with Protocol
+```
+VITE_API_BASE_URL=https://knowledge-management-backend.up.railway.app/api/v1
+```
+**Result:** Works correctly!
 
 ## Quick Check
 
@@ -78,14 +110,15 @@ To verify the variable is being used:
 
 1. Check Railway build logs
 2. Look for the build output
-3. The API URL should be embedded in the built JavaScript files
+3. Open browser console and look for: `API Base URL: ...`
+4. The API URL should be embedded in the built JavaScript files
 
 ## Still Not Working?
 
-If it still connects to localhost:
+If it still has issues:
 
 1. **Clear browser cache** - old JavaScript might be cached
 2. **Check build logs** - verify `VITE_API_BASE_URL` was available during build
 3. **Hard refresh** - Ctrl+Shift+R (or Cmd+Shift+R on Mac)
 4. **Check browser console** - look for the actual API URL being used
-
+5. **Verify the URL format** - must be `https://domain.com/api/v1` (with protocol!)

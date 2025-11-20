@@ -18,6 +18,12 @@ function getApiBaseUrl(): string {
     apiUrl = `https://${apiUrl}`;
   }
   
+  // In production (HTTPS), force HTTPS for API URL to avoid mixed content errors
+  if (import.meta.env.PROD && window.location.protocol === 'https:' && apiUrl.startsWith('http://')) {
+    console.warn('Converting HTTP to HTTPS to avoid mixed content errors');
+    apiUrl = apiUrl.replace('http://', 'https://');
+  }
+  
   // Replace Railway internal URLs with public URLs
   // Railway provides internal URLs like: https://service.railway.internal
   // These need to be replaced with public URLs: https://service.up.railway.app
