@@ -9,20 +9,14 @@ COPY package*.json ./
 # Install dependencies
 RUN npm ci
 
-# Accept build argument for API URL BEFORE copying source
-# This ensures cache invalidation when the ARG changes
-# Railway provides RAILWAY_PUBLIC_DOMAIN for other services, but we need the full public URL
-ARG VITE_API_BASE_URL
-
 # Copy source code
 COPY . .
 
-# Set environment variable for build
+# Accept build argument for API URL
+# Railway provides RAILWAY_PUBLIC_DOMAIN for other services, but we need the full public URL
+ARG VITE_API_BASE_URL
 # If VITE_API_BASE_URL is not set, use a placeholder that will be replaced at runtime
 ENV VITE_API_BASE_URL=${VITE_API_BASE_URL:-__API_BASE_URL__}
-
-# Log the API URL being used (helps debug and ensures ARG is used, invalidating cache)
-RUN echo "Building with VITE_API_BASE_URL=${VITE_API_BASE_URL}"
 
 # Build the application (Vite will use VITE_API_BASE_URL at build time)
 RUN npm run build
