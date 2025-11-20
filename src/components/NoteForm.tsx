@@ -300,18 +300,23 @@ export default function NoteForm() {
               </div>
             </div>
 
-            {/* File Upload (only when editing) */}
+            {/* File Upload (only when editing - need note ID) */}
             {isEditing && id && (
-              <div className="mb-6">
-                <h3 className="text-sm font-medium text-gray-700 mb-2">Upload Files</h3>
-                <FileUpload noteId={Number(id)} />
-              </div>
-            )}
+              <div className="mb-6 border-t border-gray-200 pt-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">File Attachments</h2>
+                
+                <div className="mb-6">
+                  <h3 className="text-sm font-medium text-gray-700 mb-3">Upload Files</h3>
+                  <p className="text-xs text-gray-500 mb-3">
+                    Drag and drop files here or click to browse. Supported: images, PDFs, documents, videos, and more.
+                  </p>
+                  <FileUpload noteId={Number(id)} />
+                </div>
 
-            {/* Attachments List (only when editing) */}
-            {isEditing && id && (
-              <div className="mb-6">
-                <AttachmentList noteId={Number(id)} />
+                <div>
+                  <h3 className="text-sm font-medium text-gray-700 mb-3">Existing Attachments</h3>
+                  <AttachmentList noteId={Number(id)} />
+                </div>
               </div>
             )}
 

@@ -9,7 +9,6 @@ import DashboardLayout from './DashboardLayout';
 import NoteTagEditor from './NoteTagEditor';
 import FileUpload from './FileUpload';
 import AttachmentList from './AttachmentList';
-import AttachmentList from './AttachmentList';
 
 export default function NoteDetail() {
   const { id } = useParams<{ id: string }>();
@@ -135,17 +134,6 @@ export default function NoteDetail() {
             </div>
           </div>
 
-          {/* File Upload */}
-          <div className="mb-6">
-            <h3 className="text-sm font-medium text-gray-700 mb-2">Upload Files</h3>
-            <FileUpload noteId={note.id} />
-          </div>
-
-          {/* Attachments List */}
-          <div className="mb-6">
-            <AttachmentList noteId={note.id} />
-          </div>
-
           {/* Content */}
           <div className="prose prose-sm max-w-none mb-8">
             {note.content ? (
@@ -157,9 +145,24 @@ export default function NoteDetail() {
             )}
           </div>
 
-          {/* Attachments */}
-          <div className="border-t border-gray-200 pt-6">
-            <AttachmentList noteId={note.id} showUpload={true} />
+          {/* Attachments Section */}
+          <div className="border-t border-gray-200 pt-6 mt-8">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">File Attachments</h2>
+            
+            {/* File Upload */}
+            <div className="mb-6">
+              <h3 className="text-sm font-medium text-gray-700 mb-3">Upload Files</h3>
+              <p className="text-xs text-gray-500 mb-3">
+                Drag and drop files here or click to browse. Supported: images, PDFs, documents, videos, and more.
+              </p>
+              <FileUpload noteId={note.id} />
+            </div>
+
+            {/* Attachments List */}
+            <div>
+              <h3 className="text-sm font-medium text-gray-700 mb-3">Existing Attachments</h3>
+              <AttachmentList noteId={note.id} />
+            </div>
           </div>
         </div>
       </div>

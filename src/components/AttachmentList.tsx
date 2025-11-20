@@ -83,7 +83,11 @@ export default function AttachmentList({ noteId }: AttachmentListProps) {
   }
 
   if (attachmentsList.length === 0) {
-    return null;
+    return (
+      <div className="text-center py-4 text-gray-500 text-sm">
+        No attachments yet. Upload files using the upload area above.
+      </div>
+    );
   }
 
   return (
