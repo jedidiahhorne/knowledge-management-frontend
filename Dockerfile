@@ -12,7 +12,11 @@ RUN npm ci
 # Copy source code
 COPY . .
 
-# Build the application
+# Accept build argument for API URL
+ARG VITE_API_BASE_URL
+ENV VITE_API_BASE_URL=${VITE_API_BASE_URL}
+
+# Build the application (Vite will use VITE_API_BASE_URL at build time)
 RUN npm run build
 
 # Production stage
