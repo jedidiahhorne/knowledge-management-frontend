@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
-import { notesApi, tagsApi, type Note } from '../lib/api';
+import { notesApi, type Note } from '../lib/api';
 import { format } from 'date-fns';
 import DashboardLayout from './DashboardLayout';
 import NoteTagEditor from './NoteTagEditor';
@@ -10,12 +10,6 @@ export default function NoteList() {
   const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
   const [page, setPage] = useState(0);
   const limit = 20;
-
-  // Fetch tags for filtering
-  const { data: tagsData } = useQuery({
-    queryKey: ['tags'],
-    queryFn: () => tagsApi.list({ limit: 1000 }),
-  });
 
   // Fetch notes
   const { data: notes, isLoading } = useQuery({
@@ -28,7 +22,6 @@ export default function NoteList() {
       }),
   });
 
-  const allTags = Array.isArray(tagsData) ? tagsData : [];
   const notesList = Array.isArray(notes) ? notes : [];
   const totalPages = Math.ceil((notesList.length || 0) / limit);
 
@@ -73,7 +66,7 @@ export default function NoteList() {
           <>
             <div className="space-y-4 mb-6">
               {notesList.map((note: Note) => (
-                <NoteListItem key={note.id} note={note} allTags={allTags} />
+                <NoteListItem key={note.id} note={note} />
               ))}
             </div>
 

@@ -39,7 +39,7 @@ export default function NoteForm() {
       return {
         title: note.title,
         content: note.content || '',
-        tag_ids: note.tags?.map((tag) => tag.id) || [],
+        tag_ids: note.tags?.map((tag: Tag) => tag.id) || [],
         is_pinned: note.is_pinned,
         is_archived: note.is_archived,
       };
@@ -132,7 +132,7 @@ export default function NoteForm() {
     setFormData({
       ...formData,
       tag_ids: formData.tag_ids.includes(tagId)
-        ? formData.tag_ids.filter((id) => id !== tagId)
+        ? formData.tag_ids.filter((id: number) => id !== tagId)
         : [...formData.tag_ids, tagId],
     });
   };
