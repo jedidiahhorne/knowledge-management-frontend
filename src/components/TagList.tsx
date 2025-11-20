@@ -28,7 +28,8 @@ export default function TagList({ selectedTagIds = [], onTagClick, showActions =
     },
   });
 
-  const tags = tagsData?.tags || [];
+  // Backend returns array directly, not an object with tags property
+  const tags = Array.isArray(tagsData) ? tagsData : [];
 
   const handleTagClick = (tag: Tag) => {
     if (onTagClick) {

@@ -29,7 +29,8 @@ export default function NoteTagEditor({ note, onUpdate }: NoteTagEditorProps) {
     },
   });
 
-  const tags = tagsData?.tags || [];
+  // Backend returns array directly, not an object with tags property
+  const tags = Array.isArray(tagsData) ? tagsData : [];
   const currentTagIds = note.tags?.map((tag) => tag.id) || [];
 
   const handleTagToggle = (tagId: number) => {

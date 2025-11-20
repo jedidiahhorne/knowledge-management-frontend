@@ -66,7 +66,9 @@ export default function SearchPage() {
       onTagSelect={(tagIds) => {
         setSelectedTagIds(tagIds);
         // Update tag names based on selected IDs
-        const selectedTags = tagsData?.tags?.filter((tag: Tag) => tagIds.includes(tag.id)) || [];
+        // Backend returns array directly, not an object with tags property
+        const allTags = Array.isArray(tagsData) ? tagsData : [];
+        const selectedTags = allTags.filter((tag: Tag) => tagIds.includes(tag.id));
         setSelectedTagNames(selectedTags.map((tag: Tag) => tag.name));
         setPage(0);
       }}
@@ -116,11 +118,11 @@ export default function SearchPage() {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
                 size={5}
               >
-                {tagsData?.tags?.map((tag: { id: number; name: string }) => (
+                {(Array.isArray(tagsData) ? tagsData : []).map((tag: { id: number; name: string }) => (
                   <option key={tag.id} value={tag.id}>
                     {tag.name}
                   </option>
-                )) || []}
+                ))}
               </select>
             </div>
 

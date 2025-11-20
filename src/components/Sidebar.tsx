@@ -17,7 +17,8 @@ export default function Sidebar({ selectedTagIds, onTagSelect, isOpen, onClose }
     queryFn: () => tagsApi.list({ search: tagSearch || undefined, limit: 100 }),
   });
 
-  const tags = tagsData?.tags || [];
+  // Backend returns array directly, not an object with tags property
+  const tags = Array.isArray(tagsData) ? tagsData : [];
 
   const handleTagToggle = (tagId: number) => {
     if (selectedTagIds.includes(tagId)) {
