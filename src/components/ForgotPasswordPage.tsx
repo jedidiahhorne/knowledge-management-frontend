@@ -44,7 +44,7 @@ export default function ForgotPasswordPage() {
       if (response.token) {
         console.log('Reset token (dev only):', response.token);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError(err.response?.data?.detail || 'Failed to request password reset. Please try again.');
     } finally {
       setLoading(false);

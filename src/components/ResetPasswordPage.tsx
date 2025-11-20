@@ -89,7 +89,7 @@ export default function ResetPasswordPage() {
       setTimeout(() => {
         navigate('/login');
       }, 2000);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError(err.response?.data?.detail || 'Failed to reset password. The token may be invalid or expired.');
     } finally {
       setLoading(false);

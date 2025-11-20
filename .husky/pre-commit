@@ -1,0 +1,17 @@
+echo "🔍 Running pre-commit checks..."
+
+# Run TypeScript type checking
+echo "📝 Checking TypeScript types..."
+npm run type-check || {
+  echo "❌ TypeScript type check failed. Please fix the errors above."
+  exit 1
+}
+
+# Run ESLint
+echo "🔧 Running linter..."
+npm run lint || {
+  echo "❌ Linting failed. Please fix the errors above."
+  exit 1
+}
+
+echo "✅ All pre-commit checks passed!"

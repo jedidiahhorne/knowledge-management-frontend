@@ -29,7 +29,7 @@ export default function LoginPage() {
     try {
       await login(username, password);
       navigate('/search');
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError(err.response?.data?.detail || 'Login failed. Please check your credentials.');
     } finally {
       setLoading(false);

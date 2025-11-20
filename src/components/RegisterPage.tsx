@@ -105,7 +105,7 @@ export default function RegisterPage() {
         formData.fullName || undefined
       );
       navigate('/search');
-    } catch (err: any) {
+    } catch (err: unknown) {
       const errorMessage = err.response?.data?.detail || 'Registration failed. Please try again.';
       setError(errorMessage);
       
