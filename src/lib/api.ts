@@ -42,47 +42,13 @@ export const api = axios.create({
   },
 });
 
-// Add token to requests and force HTTPS
+// Add token to requests
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('access_token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
-  
-  // CRITICAL: Force HTTPS if page is loaded over HTTPS (mixed content security)
-  if (typeof window !== 'undefined' && window.location.protocol === 'https:') {
-    // Force baseURL to HTTPS - this is the most important fix
-    if (config.baseURL && config.baseURL.startsWith('http://')) {
-      console.error('[API] INTERCEPTOR: Converting baseURL HTTP->HTTPS');
-      config.baseURL = config.baseURL.replace(/^http:\/\//, 'https://');
-    }
-    
-    // Also check and fix the url if it's absolute
-    if (config.url && config.url.startsWith('http://')) {
-      console.error('[API] INTERCEPTOR: Converting url HTTP->HTTPS');
-      config.url = config.url.replace(/^http:\/\//, 'https://');
-    }
-    
-    // Construct the final URL that axios will use
-    const finalUrl = config.baseURL 
-      ? (config.url?.startsWith('http') ? config.url : `${config.baseURL}${config.url || ''}`)
-      : config.url;
-    
-    // If the final URL is still HTTP, something is very wrong - force fix
-    if (finalUrl && finalUrl.startsWith('http://')) {
-      console.error('[API] INTERCEPTOR: CRITICAL - Final URL is HTTP:', finalUrl);
-      // Force baseURL to HTTPS by removing protocol and re-adding as HTTPS
-      if (config.baseURL) {
-        const urlWithoutProtocol = config.baseURL.replace(/^https?:\/\//, '');
-        config.baseURL = `https://${urlWithoutProtocol}`;
-        console.error('[API] INTERCEPTOR: Forced baseURL to:', config.baseURL);
-      }
-    }
-  }
-  
   return config;
-}, (error) => {
-  return Promise.reject(error);
 });
 
 // Handle token refresh on 401
