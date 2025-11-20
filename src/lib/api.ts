@@ -5,22 +5,33 @@ function getApiBaseUrl(): string {
   const envUrl = import.meta.env.VITE_API_BASE_URL;
   
   // If no URL is set, use localhost for development
-  if (!envUrl) {
+  if (!envUrl || envUrl === '__API_BASE_URL__') {
     return 'http://localhost:8000/api/v1';
+  }
+  
+  // Ensure URL is absolute (starts with http:// or https://)
+  let apiUrl = envUrl.trim();
+  
+  // If URL doesn't start with http:// or https://, add https://
+  if (!apiUrl.startsWith('http://') && !apiUrl.startsWith('https://')) {
+    console.warn('VITE_API_BASE_URL missing protocol, adding https://');
+    apiUrl = `https://${apiUrl}`;
   }
   
   // Replace Railway internal URLs with public URLs
   // Railway provides internal URLs like: https://service.railway.internal
   // These need to be replaced with public URLs: https://service.up.railway.app
-  if (envUrl.includes('railway.internal')) {
+  if (apiUrl.includes('railway.internal')) {
     console.warn('Railway internal URL detected. Please set VITE_API_BASE_URL to the public URL.');
     // Try to convert internal URL to public URL
-    const publicUrl = envUrl.replace(/\.railway\.internal/g, '.up.railway.app');
-    console.warn(`Attempting to use: ${publicUrl}`);
-    return publicUrl;
+    apiUrl = apiUrl.replace(/\.railway\.internal/g, '.up.railway.app');
+    console.warn(`Attempting to use: ${apiUrl}`);
   }
   
-  return envUrl;
+  // Remove trailing slash if present
+  apiUrl = apiUrl.replace(/\/$/, '');
+  
+  return apiUrl;
 }
 
 const API_BASE_URL = getApiBaseUrl();
