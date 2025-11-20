@@ -7,7 +7,6 @@ import ForgotPasswordPage from './components/ForgotPasswordPage';
 import ResetPasswordPage from './components/ResetPasswordPage';
 import SearchPage from './components/SearchPage';
 import ProtectedRoute from './components/ProtectedRoute';
-import Layout from './components/Layout';
 
 const queryClient = new QueryClient({
   defaultOptions: {

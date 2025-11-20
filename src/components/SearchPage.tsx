@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { searchApi, tagsApi, type Note, type SearchNotesParams } from '../lib/api';
+import { searchApi, tagsApi, type Note, type SearchNotesParams, type Tag } from '../lib/api';
 import { format } from 'date-fns';
 import DashboardLayout from './DashboardLayout';
 
@@ -66,8 +66,8 @@ export default function SearchPage() {
       onTagSelect={(tagIds) => {
         setSelectedTagIds(tagIds);
         // Update tag names based on selected IDs
-        const selectedTags = tagsData?.tags?.filter((tag) => tagIds.includes(tag.id)) || [];
-        setSelectedTagNames(selectedTags.map((tag) => tag.name));
+        const selectedTags = tagsData?.tags?.filter((tag: Tag) => tagIds.includes(tag.id)) || [];
+        setSelectedTagNames(selectedTags.map((tag: Tag) => tag.name));
         setPage(0);
       }}
     >
