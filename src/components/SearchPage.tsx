@@ -198,7 +198,7 @@ export default function SearchPage() {
 
           {!isLoading && !error && searchResults && (
             <>
-              {searchResults.notes.length === 0 ? (
+              {(!searchResults.notes || searchResults.notes.length === 0) ? (
                 <div className="text-center py-12">
                   <p className="text-gray-600">No notes found. Try adjusting your search criteria.</p>
                 </div>
@@ -259,7 +259,7 @@ function NoteCard({ note }: { note: Note }) {
         </div>
       </div>
 
-      {note.tags.length > 0 && (
+      {note.tags && note.tags.length > 0 && (
         <div className="flex flex-wrap gap-2 mb-3">
           {note.tags.map((tag) => (
             <span
@@ -283,7 +283,7 @@ function NoteCard({ note }: { note: Note }) {
         <div>
           Updated: {format(new Date(note.updated_at), 'MMM d, yyyy')}
         </div>
-        {note.attachments.length > 0 && (
+        {note.attachments && note.attachments.length > 0 && (
           <div>
             {note.attachments.length} attachment{note.attachments.length !== 1 ? 's' : ''}
           </div>
