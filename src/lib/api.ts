@@ -114,6 +114,19 @@ export const authApi = {
     const response = await api.get('/auth/me');
     return response.data;
   },
+  
+  requestPasswordReset: async (email: string) => {
+    const response = await api.post('/auth/password-reset-request', { email });
+    return response.data;
+  },
+  
+  resetPassword: async (token: string, newPassword: string) => {
+    const response = await api.post('/auth/password-reset', {
+      token,
+      new_password: newPassword,
+    });
+    return response.data;
+  },
 };
 
 // Search API
