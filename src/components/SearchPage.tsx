@@ -251,6 +251,8 @@ export default function SearchPage() {
   );
 }
 
+import NoteTagEditor from './NoteTagEditor';
+
 function NoteCard({ note }: { note: Note }) {
   return (
     <div className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
@@ -271,22 +273,10 @@ function NoteCard({ note }: { note: Note }) {
         </div>
       </div>
 
-      {note.tags && note.tags.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-3">
-          {note.tags.map((tag) => (
-            <span
-              key={tag.id}
-              className="px-2 py-1 text-xs rounded-full"
-              style={{
-                backgroundColor: tag.color ? `${tag.color}20` : '#e5e7eb',
-                color: tag.color || '#374151',
-              }}
-            >
-              {tag.name}
-            </span>
-          ))}
-        </div>
-      )}
+      {/* Tag Editor */}
+      <div className="mb-3">
+        <NoteTagEditor note={note} />
+      </div>
 
       <div className="flex items-center justify-between text-xs text-gray-500">
         <div>

@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -9,6 +10,7 @@ interface HeaderProps {
 export default function Header({ onMenuClick }: HeaderProps) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -66,7 +68,33 @@ export default function Header({ onMenuClick }: HeaderProps) {
               />
             </svg>
           </button>
-          <h1 className="text-xl font-bold text-gray-900">Knowledge Management</h1>
+          <Link to="/search" className="text-xl font-bold text-gray-900 hover:text-gray-700">
+            Knowledge Management
+          </Link>
+          
+          {/* Navigation Links */}
+          <nav className="hidden md:flex items-center gap-1 ml-4">
+            <Link
+              to="/search"
+              className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                location.pathname === '/search'
+                  ? 'bg-blue-100 text-blue-700'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+              }`}
+            >
+              Search
+            </Link>
+            <Link
+              to="/tags"
+              className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                location.pathname === '/tags'
+                  ? 'bg-blue-100 text-blue-700'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+              }`}
+            >
+              Tags
+            </Link>
+          </nav>
         </div>
 
         {/* Right side - User menu */}

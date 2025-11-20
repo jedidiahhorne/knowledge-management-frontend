@@ -6,6 +6,7 @@ import RegisterPage from './components/RegisterPage';
 import ForgotPasswordPage from './components/ForgotPasswordPage';
 import ResetPasswordPage from './components/ResetPasswordPage';
 import SearchPage from './components/SearchPage';
+import TagsPage from './components/TagsPage';
 import ProtectedRoute from './components/ProtectedRoute';
 
 const queryClient = new QueryClient({
@@ -51,6 +52,14 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <SearchPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/tags"
+        element={
+          <ProtectedRoute>
+            <TagsPage />
           </ProtectedRoute>
         }
       />

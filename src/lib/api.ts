@@ -250,5 +250,14 @@ export const tagsApi = {
     const response = await api.post('/tags', data);
     return response.data;
   },
+  
+  update: async (id: number, data: { name?: string; color?: string; description?: string }) => {
+    const response = await api.put(`/tags/${id}`, data);
+    return response.data;
+  },
+  
+  delete: async (id: number) => {
+    await api.delete(`/tags/${id}`);
+  },
 };
 
