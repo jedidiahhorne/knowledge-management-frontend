@@ -6,46 +6,58 @@ function getApiBaseUrl(): string {
   
   // If no URL is set, use localhost for development
   if (!envUrl || envUrl === '__API_BASE_URL__') {
+    if (typeof window !== 'undefined' && window.location.protocol === 'https:') {
+      console.warn('No VITE_API_BASE_URL set, but page is HTTPS. This will cause issues.');
+    }
     return 'http://localhost:8000/api/v1';
   }
   
   // Ensure URL is absolute (starts with http:// or https://)
   let apiUrl = envUrl.trim();
   
+  // Log original value for debugging
+  if (typeof window !== 'undefined') {
+    console.log('[API] Original VITE_API_BASE_URL:', envUrl);
+    console.log('[API] Page protocol:', window.location.protocol);
+  }
+  
   // If URL doesn't start with http:// or https://, add https://
   if (!apiUrl.startsWith('http://') && !apiUrl.startsWith('https://')) {
-    console.warn('VITE_API_BASE_URL missing protocol, adding https://');
+    console.warn('[API] VITE_API_BASE_URL missing protocol, adding https://');
     apiUrl = `https://${apiUrl}`;
   }
   
-  // In production (HTTPS), force HTTPS for API URL to avoid mixed content errors
-  if (import.meta.env.PROD && window.location.protocol === 'https:' && apiUrl.startsWith('http://')) {
-    console.warn('Converting HTTP to HTTPS to avoid mixed content errors');
-    apiUrl = apiUrl.replace('http://', 'https://');
+  // ALWAYS convert HTTP to HTTPS if page is loaded over HTTPS (mixed content security)
+  // This is critical for production deployments on Railway
+  if (typeof window !== 'undefined' && window.location.protocol === 'https:' && apiUrl.startsWith('http://')) {
+    console.warn('[API] Converting HTTP to HTTPS to avoid mixed content errors');
+    console.warn('[API] Original URL:', apiUrl);
+    apiUrl = apiUrl.replace(/^http:\/\//, 'https://');
+    console.warn('[API] Converted URL:', apiUrl);
   }
   
   // Replace Railway internal URLs with public URLs
   // Railway provides internal URLs like: https://service.railway.internal
   // These need to be replaced with public URLs: https://service.up.railway.app
   if (apiUrl.includes('railway.internal')) {
-    console.warn('Railway internal URL detected. Please set VITE_API_BASE_URL to the public URL.');
+    console.warn('[API] Railway internal URL detected. Please set VITE_API_BASE_URL to the public URL.');
     // Try to convert internal URL to public URL
     apiUrl = apiUrl.replace(/\.railway\.internal/g, '.up.railway.app');
-    console.warn(`Attempting to use: ${apiUrl}`);
+    console.warn('[API] Attempting to use:', apiUrl);
   }
   
   // Remove trailing slash if present
   apiUrl = apiUrl.replace(/\/$/, '');
   
+  // Final log
+  if (typeof window !== 'undefined') {
+    console.log('[API] Final API Base URL:', apiUrl);
+  }
+  
   return apiUrl;
 }
 
 const API_BASE_URL = getApiBaseUrl();
-
-// Log the API URL being used (helpful for debugging)
-if (import.meta.env.PROD) {
-  console.log('API Base URL:', API_BASE_URL);
-}
 
 export const api = axios.create({
   baseURL: API_BASE_URL,
