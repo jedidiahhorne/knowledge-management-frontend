@@ -17,15 +17,29 @@ Railway environment variables are available at **runtime**, but Vite needs them 
 
 ## Solution 2: Force Rebuild Without Cache
 
-Railway might be using a cached build. Force a fresh build:
+Railway might be using a cached Docker build. Force a fresh build:
 
+### Option A: Via Railway Dashboard
 1. Go to Railway → Frontend Service → **"Settings"** tab
 2. Scroll to **"Build"** section
-3. Look for **"Clear Build Cache"** or similar option
+3. Look for **"Clear Build Cache"** or **"Rebuild"** option
 4. Or trigger a redeploy:
    - Go to **"Deployments"** tab
    - Click **"Redeploy"**
    - Select **"Clear cache"** if available
+
+### Option B: Force Cache Invalidation (Recommended)
+The Dockerfile has been updated to properly invalidate cache when `VITE_API_BASE_URL` changes. However, if you're still seeing cached builds:
+
+1. **Make a small code change** (add a comment, whitespace, etc.)
+2. **Commit and push** - This forces Railway to rebuild
+3. **Or delete and recreate the environment variable** - This should trigger a rebuild
+
+### Option C: Railway CLI
+If you have Railway CLI installed:
+```bash
+railway redeploy --clear-cache
+```
 
 ## Solution 3: Verify Build Logs
 
@@ -34,8 +48,19 @@ Check if the environment variable is being used during build:
 1. Go to Railway → Frontend Service → **"Deployments"** tab
 2. Click on the latest deployment
 3. Check the build logs
-4. Look for lines containing `VITE_API_BASE_URL`
-5. Verify it shows the correct HTTPS URL
+4. Look for the line: `Building with VITE_API_BASE_URL=...`
+5. Verify it shows the correct HTTPS URL (should be `https://...`)
+6. If you see `__API_BASE_URL__` or empty, Railway isn't passing the build argument
+
+**Example of correct log:**
+```
+Building with VITE_API_BASE_URL=https://knowledge-management-backend-production.up.railway.app/api/v1
+```
+
+**Example of incorrect log (build arg not passed):**
+```
+Building with VITE_API_BASE_URL=__API_BASE_URL__
+```
 
 ## Solution 4: Check Browser Console
 
