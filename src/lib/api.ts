@@ -1,6 +1,34 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api/v1';
+// Get API base URL, ensuring we use public URL, not internal Railway URL
+function getApiBaseUrl(): string {
+  const envUrl = import.meta.env.VITE_API_BASE_URL;
+  
+  // If no URL is set, use localhost for development
+  if (!envUrl) {
+    return 'http://localhost:8000/api/v1';
+  }
+  
+  // Replace Railway internal URLs with public URLs
+  // Railway provides internal URLs like: https://service.railway.internal
+  // These need to be replaced with public URLs: https://service.up.railway.app
+  if (envUrl.includes('railway.internal')) {
+    console.warn('Railway internal URL detected. Please set VITE_API_BASE_URL to the public URL.');
+    // Try to convert internal URL to public URL
+    const publicUrl = envUrl.replace(/\.railway\.internal/g, '.up.railway.app');
+    console.warn(`Attempting to use: ${publicUrl}`);
+    return publicUrl;
+  }
+  
+  return envUrl;
+}
+
+const API_BASE_URL = getApiBaseUrl();
+
+// Log the API URL being used (helpful for debugging)
+if (import.meta.env.PROD) {
+  console.log('API Base URL:', API_BASE_URL);
+}
 
 export const api = axios.create({
   baseURL: API_BASE_URL,

@@ -1,12 +1,18 @@
 # Fixing Frontend API Connection Issues
 
-## Problem: Connection Refused to localhost:8000
+## Problem 1: Connection Refused to localhost:8000
 
 The frontend is trying to connect to `localhost:8000` instead of your Railway backend URL.
 
-## Root Cause
+## Problem 2: ERR_NAME_NOT_RESOLVED with railway.internal
 
-Vite embeds environment variables **at build time**, not runtime. If `VITE_API_BASE_URL` isn't set during the Docker build, it defaults to `localhost:8000`.
+The frontend is trying to use Railway's internal URL (`railway.internal`) which is not accessible from browsers.
+
+## Root Causes
+
+1. **Vite embeds environment variables at build time**, not runtime. If `VITE_API_BASE_URL` isn't set during the Docker build, it defaults to `localhost:8000`.
+
+2. **Railway provides internal URLs** (`railway.internal`) which are only accessible within Railway's network, not from browsers. You must use the **public URL**.
 
 ## Solution
 
@@ -22,7 +28,11 @@ You need to set `VITE_API_BASE_URL` as a **build argument** in Railway.
 |----------|-------|
 | `VITE_API_BASE_URL` | `https://your-backend-service.up.railway.app/api/v1` |
 
-**Important:** Replace `your-backend-service.up.railway.app` with your actual backend Railway URL.
+**CRITICAL:** 
+- Use the **PUBLIC URL** from Railway's Networking tab
+- URL format: `https://service-name.up.railway.app/api/v1`
+- **DO NOT** use `railway.internal` URLs - these don't work from browsers
+- **DO NOT** use `localhost` - this won't work in production
 
 ### Step 2: Trigger a Rebuild
 
@@ -52,8 +62,15 @@ If the above doesn't work, Railway might need the variable set differently. Chec
 1. Go to your Railway project
 2. Click on your **backend service**
 3. Go to **"Networking"** tab
-4. Copy the public URL (e.g., `https://knowledge-management-backend.up.railway.app`)
-5. Add `/api/v1` to the end for the full API base URL
+4. Look for **"Public URL"** or **"Public Domain"**
+5. Copy the public URL (e.g., `https://knowledge-management-backend.up.railway.app`)
+6. Add `/api/v1` to the end for the full API base URL
+7. **Example:** `https://knowledge-management-backend.up.railway.app/api/v1`
+
+**Important:** 
+- Use the URL that ends with `.up.railway.app`
+- **NOT** the one with `.railway.internal`
+- The public URL is what browsers can access
 
 ## Quick Check
 
