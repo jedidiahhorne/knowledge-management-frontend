@@ -66,12 +66,35 @@ export const api = axios.create({
   },
 });
 
-// Add token to requests
+// Add token to requests and force HTTPS
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('access_token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+  
+  // CRITICAL: Force HTTPS if page is loaded over HTTPS (mixed content security)
+  // This ensures all requests use HTTPS even if baseURL was set to HTTP
+  if (typeof window !== 'undefined' && window.location.protocol === 'https:') {
+    if (config.url && config.url.startsWith('http://')) {
+      console.warn('[API] Interceptor converting HTTP to HTTPS:', config.url);
+      config.url = config.url.replace(/^http:\/\//, 'https://');
+    }
+    if (config.baseURL && config.baseURL.startsWith('http://')) {
+      console.warn('[API] Interceptor converting baseURL HTTP to HTTPS:', config.baseURL);
+      config.baseURL = config.baseURL.replace(/^http:\/\//, 'https://');
+    }
+    // Also check the full URL that axios will construct
+    const fullUrl = config.baseURL ? `${config.baseURL}${config.url || ''}` : config.url;
+    if (fullUrl && fullUrl.startsWith('http://')) {
+      console.warn('[API] Interceptor converting full URL HTTP to HTTPS:', fullUrl);
+      // Update baseURL to force HTTPS
+      if (config.baseURL) {
+        config.baseURL = config.baseURL.replace(/^http:\/\//, 'https://');
+      }
+    }
+  }
+  
   return config;
 });
 
