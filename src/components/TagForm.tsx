@@ -36,7 +36,10 @@ export default function TagForm({ tag, onSuccess, onCancel }: TagFormProps) {
     mutationFn: (data: { name: string; color?: string; description?: string }) =>
       tagsApi.create(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tags'] });
+      // Invalidate all tag queries (including those with search parameters)
+      queryClient.invalidateQueries({ queryKey: ['tags'], exact: false });
+      queryClient.invalidateQueries({ queryKey: ['search-notes'] });
+      queryClient.invalidateQueries({ queryKey: ['notes'] });
       if (!tag) {
         setFormData({ name: '', description: '', color: COLOR_PRESETS[0] });
       }
@@ -53,7 +56,8 @@ export default function TagForm({ tag, onSuccess, onCancel }: TagFormProps) {
     mutationFn: (data: { name?: string; color?: string; description?: string }) =>
       tagsApi.update(tag!.id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tags'] });
+      // Invalidate all tag queries (including those with search parameters)
+      queryClient.invalidateQueries({ queryKey: ['tags'], exact: false });
       queryClient.invalidateQueries({ queryKey: ['search-notes'] });
       queryClient.invalidateQueries({ queryKey: ['notes'] });
       if (onSuccess) onSuccess();

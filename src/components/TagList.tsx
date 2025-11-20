@@ -21,7 +21,8 @@ export default function TagList({ selectedTagIds = [], onTagClick, showActions =
   const deleteTagMutation = useMutation({
     mutationFn: (id: number) => tagsApi.delete(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tags'] });
+      // Invalidate all tag queries (including those with search parameters)
+      queryClient.invalidateQueries({ queryKey: ['tags'], exact: false });
       queryClient.invalidateQueries({ queryKey: ['search-notes'] });
       queryClient.invalidateQueries({ queryKey: ['notes'] });
     },
