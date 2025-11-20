@@ -31,11 +31,11 @@ export default function NoteTagEditor({ note, onUpdate }: NoteTagEditorProps) {
 
   // Backend returns array directly, not an object with tags property
   const tags = Array.isArray(tagsData) ? tagsData : [];
-  const currentTagIds = note.tags?.map((tag) => tag.id) || [];
+  const currentTagIds = note.tags?.map((tag: Tag) => tag.id) || [];
 
   const handleTagToggle = (tagId: number) => {
     const newTagIds = currentTagIds.includes(tagId)
-      ? currentTagIds.filter((id) => id !== tagId)
+      ? currentTagIds.filter((id: number) => id !== tagId)
       : [...currentTagIds, tagId];
     
     updateNoteMutation.mutate(newTagIds);
@@ -48,7 +48,7 @@ export default function NoteTagEditor({ note, onUpdate }: NoteTagEditorProps) {
       {/* Current Tags */}
       <div className="flex flex-wrap gap-2 mb-2">
         {note.tags && note.tags.length > 0 ? (
-          note.tags.map((tag) => (
+          note.tags.map((tag: Tag) => (
             <span
               key={tag.id}
               className="inline-flex items-center gap-1 px-2 py-1 text-xs rounded-full"

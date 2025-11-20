@@ -83,7 +83,7 @@ describe('Validation Utilities', () => {
   describe('validateFullName', () => {
     it('returns null for valid full name', () => {
       expect(validateFullName('John Doe')).toBeNull();
-      expect(validateFullName(undefined)).toBeNull();
+      expect(validateFullName(undefined as unknown as string)).toBeNull();
     });
 
     it('returns error for too long full name', () => {

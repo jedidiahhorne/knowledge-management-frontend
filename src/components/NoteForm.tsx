@@ -66,7 +66,7 @@ export default function NoteForm() {
   const createMutation = useMutation({
     mutationFn: (data: { title: string; content?: string; tag_ids?: number[]; is_pinned?: boolean; is_archived?: boolean }) =>
       notesApi.create(data),
-    onSuccess: (newNote) => {
+    onSuccess: (newNote: Note) => {
       queryClient.invalidateQueries({ queryKey: ['notes'] });
       queryClient.invalidateQueries({ queryKey: ['search-notes'] });
       navigate(`/notes/${newNote.id}`);
@@ -81,7 +81,7 @@ export default function NoteForm() {
   const updateMutation = useMutation({
     mutationFn: (data: { title?: string; content?: string; tag_ids?: number[]; is_pinned?: boolean; is_archived?: boolean }) =>
       notesApi.update(Number(id), data),
-    onSuccess: (updatedNote) => {
+    onSuccess: (updatedNote: Note) => {
       queryClient.invalidateQueries({ queryKey: ['notes'] });
       queryClient.invalidateQueries({ queryKey: ['note', id] });
       queryClient.invalidateQueries({ queryKey: ['search-notes'] });
