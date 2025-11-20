@@ -35,11 +35,33 @@ function getApiBaseUrl(): string {
 
 const API_BASE_URL = getApiBaseUrl();
 
+// Custom params serializer for FastAPI array query parameters
+// FastAPI expects arrays as repeated params: tag_ids=1&tag_ids=2
+const fastApiParamsSerializer = (params: Record<string, unknown>): string => {
+  const searchParams = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) => {
+    if (value === undefined || value === null) {
+      // Skip undefined/null values
+      return;
+    }
+    if (Array.isArray(value)) {
+      // For arrays, add each value as a separate parameter (FastAPI format)
+      value.forEach((item) => {
+        searchParams.append(key, String(item));
+      });
+    } else {
+      searchParams.append(key, String(value));
+    }
+  });
+  return searchParams.toString();
+};
+
 export const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
+  paramsSerializer: fastApiParamsSerializer,
 });
 
 // Add token to requests
