@@ -90,7 +90,8 @@ export default function ResetPasswordPage() {
         navigate('/login');
       }, 2000);
     } catch (err: unknown) {
-      setError(err.response?.data?.detail || 'Failed to reset password. The token may be invalid or expired.');
+      const errorMessage = (err as { response?: { data?: { detail?: string } } })?.response?.data?.detail;
+      setError(errorMessage || 'Failed to reset password. The token may be invalid or expired.');
     } finally {
       setLoading(false);
     }

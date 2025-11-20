@@ -30,7 +30,8 @@ export default function LoginPage() {
       await login(username, password);
       navigate('/search');
     } catch (err: unknown) {
-      setError(err.response?.data?.detail || 'Login failed. Please check your credentials.');
+      const errorMessage = (err as { response?: { data?: { detail?: string } } })?.response?.data?.detail;
+      setError(errorMessage || 'Login failed. Please check your credentials.');
     } finally {
       setLoading(false);
     }

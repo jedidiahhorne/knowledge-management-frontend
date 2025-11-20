@@ -106,12 +106,13 @@ export default function RegisterPage() {
       );
       navigate('/search');
     } catch (err: unknown) {
-      const errorMessage = err.response?.data?.detail || 'Registration failed. Please try again.';
+      const axiosError = err as { response?: { data?: { detail?: string } } };
+      const errorMessage = axiosError?.response?.data?.detail || 'Registration failed. Please try again.';
       setError(errorMessage);
       
       // Set field-specific errors if available
-      if (err.response?.data?.detail) {
-        const detail = err.response.data.detail;
+      if (axiosError?.response?.data?.detail) {
+        const detail = axiosError.response.data.detail;
         if (detail.includes('email') || detail.includes('Email')) {
           setErrors((prev) => ({ ...prev, email: detail }));
         } else if (detail.includes('username') || detail.includes('Username')) {
