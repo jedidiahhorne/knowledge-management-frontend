@@ -7,6 +7,9 @@ import ForgotPasswordPage from './components/ForgotPasswordPage';
 import ResetPasswordPage from './components/ResetPasswordPage';
 import SearchPage from './components/SearchPage';
 import TagsPage from './components/TagsPage';
+import NoteList from './components/NoteList';
+import NoteDetail from './components/NoteDetail';
+import NoteForm from './components/NoteForm';
 import ProtectedRoute from './components/ProtectedRoute';
 
 const queryClient = new QueryClient({
@@ -60,6 +63,38 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <TagsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/notes"
+        element={
+          <ProtectedRoute>
+            <NoteList />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/notes/new"
+        element={
+          <ProtectedRoute>
+            <NoteForm />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/notes/:id"
+        element={
+          <ProtectedRoute>
+            <NoteDetail />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/notes/:id/edit"
+        element={
+          <ProtectedRoute>
+            <NoteForm />
           </ProtectedRoute>
         }
       />

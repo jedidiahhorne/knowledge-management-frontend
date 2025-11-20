@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { searchApi, tagsApi, type Note, type SearchNotesParams, type Tag } from '../lib/api';
 import { format } from 'date-fns';
@@ -257,7 +258,10 @@ import NoteTagEditor from './NoteTagEditor';
 
 function NoteCard({ note }: { note: Note }) {
   return (
-    <div className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+    <Link
+      to={`/notes/${note.id}`}
+      className="block border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+    >
       <div className="flex items-start justify-between mb-2">
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
@@ -293,7 +297,7 @@ function NoteCard({ note }: { note: Note }) {
           </div>
         )}
       </div>
-    </div>
+    </Link>
   );
 }
 
