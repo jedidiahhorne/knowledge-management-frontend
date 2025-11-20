@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { searchApi, tagsApi, type Note, type SearchNotesParams } from '../lib/api';
 import { format } from 'date-fns';
+import DashboardLayout from './DashboardLayout';
 
 export default function SearchPage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -236,6 +237,7 @@ export default function SearchPage() {
           )}
         </div>
       </div>
+    </DashboardLayout>
   );
 }
 
