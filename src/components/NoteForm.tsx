@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { notesApi, tagsApi, type Tag } from '../lib/api';
+import { notesApi, tagsApi, type Tag, type Note } from '../lib/api';
 import DashboardLayout from './DashboardLayout';
 import FileUpload from './FileUpload';
 import AttachmentList from './AttachmentList';

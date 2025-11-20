@@ -28,5 +28,5 @@ export default defineConfig({
         '**/mockData.ts',
       ],
     },
-  } as import('vitest/config').UserConfig['test'],
+  },
 })

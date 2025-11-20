@@ -43,18 +43,18 @@ export const mockApi = {
     delete: vi.fn().mockResolvedValue(undefined),
   },
   search: {
-    searchNotes: vi.fn().mockResolvedValue<SearchNotesResponse>({
+    searchNotes: vi.fn().mockResolvedValue({
       notes: mockNotes,
       total: mockNotes.length,
       skip: 0,
       limit: 20,
-    }),
-    searchTags: vi.fn().mockResolvedValue<SearchTagsResponse>({
+    } as SearchNotesResponse),
+    searchTags: vi.fn().mockResolvedValue({
       tags: mockTags,
       total: mockTags.length,
       skip: 0,
       limit: 100,
-    }),
+    } as SearchTagsResponse),
   },
   attachments: {
     list: vi.fn().mockResolvedValue(mockAttachments),
